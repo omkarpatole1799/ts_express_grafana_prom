@@ -1,15 +1,30 @@
-version: '3'
-
 services:
   prom-server:
     image: prom/prometheus
+    container_name: ts_express_prometheus
     ports:
       - 9090:9090
     volumes:
       - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+      - ./docker_data/prometheus-storage:/prometheus
 
   grafna:
     image: grafana/grafana-oss
+    container_name: ts_express_grafana
     ports:
       - 3000:3000
-    depends_on: ["prom-server"]
+    depends_on: ['prom-server']
+    volumes:
+      - ./docker_data/grafana-storage:/var/lib/grafana
+
+  mongo:
+  
+    image: mongo:latest
+    container_name: ts_express_mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker_data/mongo-storage:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
