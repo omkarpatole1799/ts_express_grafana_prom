@@ -72,7 +72,7 @@ app.use('/api', indexRouter);
 app.get('/metrics', async (rq: Request, rs: Response, next: NextFunction) => {
 	rs.setHeader('Content-Type', client.register.contentType);
 	const metrics = await client.register.metrics();
-	rs.send(metrics);
+	rs.end(metrics);
 });
 
 app.use(errorHandler);

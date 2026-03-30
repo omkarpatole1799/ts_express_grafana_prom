@@ -1,0 +1,6 @@
+node_modules
+docker_data
+dist
+.git
+.env
+.vscode

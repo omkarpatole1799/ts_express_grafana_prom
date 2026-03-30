@@ -1,43 +1,57 @@
-import { Db, MongoClient } from "mongodb";
-import { log } from "node:console";
+import { Db, MongoClient } from 'mongodb';
+import { log } from 'node:console';
 
-import * as dotenv from "dotenv";
-import ApiError from "./api-error";
+import * as dotenv from 'dotenv';
+import ApiError from './api-error';
 dotenv.config({
-  path: "./.env",
+	path: './.env',
 });
 
 let db: Db;
 
-const connectMongo = async () => {
-  try {
-    const url = process.env.MONGO_URL as string;
-    if (url?.trim() === "") {
-      throw new ApiError(400, "Invalid or no mongo url found");
-    }
-    const client = new MongoClient(url, {
-      tls: true,
-    });
-    log(`Connecting with mongo...`);
-    await client.connect();
+const connectMongo = async (retries = 5) => {
+	for (let attempt = 1; attempt <= retries; attempt++) {
+		try {
+			const url = process.env.MONGO_URL as string;
+			if (url?.trim() === '') {
+				throw new ApiError(400, 'Invalid or no mongo url found');
+			}
+			const client = new MongoClient(url, {
+				tls: false,
+				directConnection: true,
+				serverSelectionTimeoutMS: 5000,
+			});
+			log(`Connecting with mongo... (attempt ${attempt}/${retries})`);
+			await client.connect();
 
-    db = client.db(); // getting db
-    log(`Connected with db`);
-  } catch (error: unknown) {
-    log(`Error connecting with db`);
-    if (error instanceof Error) {
-      log(error?.message);
-    } else {
-      log(`Unknown error mongo connect. Process exit with status code 1`);
-    }
-    log(error);
-    process.exit(1);
-  }
+			db = client.db(); // getting db
+			log(`Connected with db`);
+			return; // Success, exit the function
+		} catch (error: unknown) {
+			log(`Error connecting with db (attempt ${attempt}/${retries})`);
+			if (error instanceof Error) {
+				log(error?.message);
+			} else {
+				log(`Unknown error mongo connect`);
+			}
+
+			if (attempt === retries) {
+				log(`Failed to connect after ${retries} attempts. Exiting...`);
+				log(error);
+				process.exit(1);
+			}
+
+			// Wait before retrying (exponential backoff)
+			const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+			log(`Retrying in ${delay}ms...`);
+			await new Promise((resolve) => setTimeout(resolve, delay));
+		}
+	}
 };
 
 export const getDb = () => {
-  if (!db) throw new ApiError(404, "No db connection found");
-  return db;
+	if (!db) throw new ApiError(404, 'No db connection found');
+	return db;
 };
 
 export default connectMongo;

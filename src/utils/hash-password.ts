@@ -10,7 +10,7 @@ const hashPassword = (password: string) => {
 		bcrypt.hash(
 			password,
 			projectConfigs.saltRounds,
-			function (err: Error, hash: string) {
+			function (err: Error | undefined, hash: string) {
 				if (err) rej(err?.message || 'Unable to has password');
 				res(hash);
 			},
@@ -26,8 +26,8 @@ const comparePassword = (plainTextPassword: string, hashedPassword: string) => {
 	return new Promise((res, rej) => {
 		bcrypt.compare(
 			plainTextPassword,
-			hashPassword,
-			function (err: Error, result: string) {
+			hashedPassword,
+			function (err: unknown, result: boolean) {
 				if (err || !result) rej(false);
 				res(result);
 			},
