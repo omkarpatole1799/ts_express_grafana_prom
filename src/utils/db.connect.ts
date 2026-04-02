@@ -13,14 +13,11 @@ const connectMongo = async (retries = 5) => {
 	for (let attempt = 1; attempt <= retries; attempt++) {
 		try {
 			const url = process.env.MONGO_URL as string;
+			console.log(`Mongo URL: ${url}`);
 			if (url?.trim() === '') {
 				throw new ApiError(400, 'Invalid or no mongo url found');
 			}
-			const client = new MongoClient(url, {
-				tls: false,
-				directConnection: true,
-				serverSelectionTimeoutMS: 5000,
-			});
+			const client = new MongoClient(url);
 			log(`Connecting with mongo... (attempt ${attempt}/${retries})`);
 			await client.connect();
 

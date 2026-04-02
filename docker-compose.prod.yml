@@ -1,0 +1,10 @@
+# Production configuration
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+services:
+  node_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # No volume mounts in production - uses only built image
+    restart: always

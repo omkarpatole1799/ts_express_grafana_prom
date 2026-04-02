@@ -3,12 +3,14 @@ services:
     build: .
     container_name: ts_express_server
     ports:
-      - '3002:3000'
+      - '3011:3011'
+      - '27011:27017'
     depends_on: ['mongo', 'prom-server']
     volumes:
       - .:/var/www/app
     environment:
-      - MONGO_URL=mongodb://root:1234@mongo:27017/ts_express_grafna_prom?authSource=admin
+      - PORT=3011
+      - MONGO_URL=mongodb://root:1234@mongo:27017/ts_grafna?authSource=admin
 
   prom-server:
     image: prom/prometheus

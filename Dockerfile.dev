@@ -1,0 +1,12 @@
+FROM node:20-alpine
+
+WORKDIR /var/www/app
+
+COPY package.json yarn.lock ./
+
+RUN corepack enable && yarn install
+
+COPY . .
+
+# Don't build in dev, let tsx handle TypeScript on the fly
+CMD ["npx", "tsx", "watch", "src/server.ts"]

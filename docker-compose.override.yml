@@ -1,0 +1,13 @@
+# Development overrides - automatically merged with docker-compose.yml
+# Usage: docker-compose up (uses both docker-compose.yml + docker-compose.override.yml)
+
+services:
+  node_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npx tsx watch src/server.ts  # Hot reload
+    volumes:
+      - .:/var/www/app
+      - /var/www/app/node_modules  # Prevent local node_modules from overwriting
+      - /var/www/app/dist  # Keep dist separate
