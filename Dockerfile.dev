@@ -8,5 +8,5 @@ RUN corepack enable && yarn install
 
 COPY . .
 
-# Don't build in dev, let tsx handle TypeScript on the fly
-CMD ["npx", "tsx", "watch", "src/server.ts"]
+# Don't build in dev, let nodemon + tsx handle TypeScript on the fly
+CMD ["npx", "nodemon"]

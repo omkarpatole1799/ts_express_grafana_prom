@@ -6,8 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: npx tsx watch src/server.ts  # Hot reload
     volumes:
       - .:/var/www/app
       - /var/www/app/node_modules  # Prevent local node_modules from overwriting
-      - /var/www/app/dist  # Keep dist separate

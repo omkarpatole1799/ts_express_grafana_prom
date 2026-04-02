@@ -1,6 +1,8 @@
 {
-  "watch": ["src"],
-  "ext": "ts,json",
-  "ignore": ["node_modules"],
-  "exec": "tsx src/server.ts"
+	"watch": ["src"],
+	"ext": "ts,json",
+	"ignore": ["node_modules"],
+	"exec": "tsx src/server.ts",
+	"delay": 500,
+	"legacyWatch": true
 }

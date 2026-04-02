@@ -8,14 +8,17 @@ const shortUrl = tryCatch(async (rq: Request, rs: Response) => {
 	const { url } = rq.body;
 
 	const shortId = nanoid(7);
+	console.log(shortId);
 
 	const insertedUrl = await getDb().collection('Url').insertOne({
 		originalUrl: url,
 		shortUrl: shortId,
 	});
 
+	console.log(1);
+
 	return new ApiResponse('Short URL created successfully', {
-		shortUrl: insertedUrl,
+		shortUrl: shortId,
 	});
 });
 
