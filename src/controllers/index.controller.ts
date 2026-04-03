@@ -3,9 +3,10 @@ import ApiError from '../utils/api-error';
 import ApiResponse from '../utils/api-response';
 import { getDb } from '../utils/db.connect';
 import tryCatch from '../utils/tryCatch';
+import { ROLES } from '../utils/constants.js';
 
 const register = tryCatch(async (req, res, next) => {
-	const { username, age, password } = req.body;
+	const { username, age, password, role } = req.body;
 	log(`Registering ${username}`);
 
 	if (username?.trim() === '' || !username) {
@@ -13,6 +14,11 @@ const register = tryCatch(async (req, res, next) => {
 	}
 	if (!age || isNaN(age) || age >= 60 || age <= 18) {
 		throw new ApiError(400, 'Invalid age');
+	}
+
+	const allowedRoles = Object.values(ROLES);
+	if (!allowedRoles.includes(role)) {
+		throw new ApiError(400, 'Invalid role');
 	}
 
 	if (
@@ -28,6 +34,7 @@ const register = tryCatch(async (req, res, next) => {
 		username,
 		age,
 		password,
+		role,
 	});
 
 	console.log(newUser, 'newUser');
